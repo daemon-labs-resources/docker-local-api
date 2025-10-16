@@ -41,7 +41,7 @@ This guide walks you through setting up a modern local API development environme
 
     -   Run the following command
 
-        ````shell
+        ```shell
         docker compose run --rm app npm init -y
         ```
         > Notice how the `app` directory is automatically created on your host machine due to the volume mount.
@@ -184,7 +184,7 @@ This guide walks you through setting up a modern local API development environme
     -   Update the `./src/index.ts` file from `Hello World!` to `Hello Universe!`
         > This change won't take effect until we implement hot-reloading.
     -   Run the following command
-    
+
         ```shell
         docker compose run --rm app npm add --save-dev nodemon ts-node
         ```

@@ -10,7 +10,7 @@ It focuses on separating the build process for a smaller final image while maint
 1.  **Create project folder**
     > If you are able to, create a Git repo, clone, and use that folder as your project root.
 
-2.  **Create `Dockerfile`**
+2.  **Create `Dockerfile`**  
     Add the following content:
 
     ```Dockerfile
@@ -19,7 +19,7 @@ It focuses on separating the build process for a smaller final image while maint
     WORKDIR /app
     ```
 
-3.  **Create `docker-compose.yaml`**
+3.  **Create `docker-compose.yaml`**  
     Add the following content to define your service:
 
     ```yaml
@@ -48,7 +48,7 @@ It focuses on separating the build process for a smaller final image while maint
 
 ## 2. Dependency management and TypeScript config
 
-1.  **Initialise project and install dev dependencies**
+1.  **Initialise project and install dev dependencies**  
     We use explicit volume mounts (`-v ./app:/app`) in the following commands to ensure the generated files are saved back to your local host folder.
 
     -   Run the following command

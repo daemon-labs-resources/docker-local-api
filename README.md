@@ -5,9 +5,9 @@ It focuses on separating the build process for a smaller final image while maint
 
 ---
 
-## 1. Project Setup and Basic Build
+## 1. Project setup and basic build
 
-1.  **Create Project Folder**
+1.  **Create project folder**
     > If you are able to, create a Git repo, clone, and use that folder as your project root.
 
 2.  **Create `Dockerfile`**
@@ -29,7 +29,7 @@ It focuses on separating the build process for a smaller final image while maint
         build: .
     ```
 
-4.  **Initial Image Check**
+4.  **Initial image check**
     -   Run the following command
         
         ```shell
@@ -38,7 +38,7 @@ It focuses on separating the build process for a smaller final image while maint
         > If you now run `docker images`, you'll see a newly created image which should be around 226MB in size.
 
     -   Run the following command
-    
+
         ```shell
         docker compose run --rm app node --version
         ```
@@ -46,9 +46,9 @@ It focuses on separating the build process for a smaller final image while maint
 
 ---
 
-## 2. Dependency Management and TypeScript Config
+## 2. Dependency management and TypeScript config
 
-1.  **Initialise Project and Install Dev Dependencies**
+1.  **Initialise project and install dev dependencies**
     We use explicit volume mounts (`-v ./app:/app`) in the following commands to ensure the generated files are saved back to your local host folder.
 
     -   Run the following command
@@ -81,7 +81,7 @@ It focuses on separating the build process for a smaller final image while maint
     > [!NOTE]
     > While you could auto-generate this file, our manual configuration using a recommended preset keeps the file minimal and clean.
 
-3.  **Create Source File and Scripts**
+3.  **Create source file and scripts**
     -   Create `./src/index.ts` with the following:
 
         ```typescript
@@ -97,7 +97,7 @@ It focuses on separating the build process for a smaller final image while maint
 
 ---
 
-## 3. Production Build and Initial Run
+## 3. Production build and initial run
 
 1.  **Update `Dockerfile`**
     Update the end of your `Dockerfile` to handle dependencies, build the project, and define the runtime command:
@@ -114,7 +114,7 @@ It focuses on separating the build process for a smaller final image while maint
     CMD [ "npm", "start" ]
     ```
 
-2.  **Run Final Build**
+2.  **Run final build**
     -   Run the following command
 
         ```shell
@@ -128,7 +128,7 @@ It focuses on separating the build process for a smaller final image while maint
         ```
         > Notice that we haven't included `-v ./app:/app` in this command, but the output still includes a `dist` folder. This is because the build step was executed *inside* the image during the `docker compose build` process.
 
-3.  **Test the Application**
+3.  **Test the application**
     -   Run the following command
 
         ```shell
@@ -138,9 +138,9 @@ It focuses on separating the build process for a smaller final image while maint
 
 ---
 
-## 4. Adding Express and Port Mapping
+## 4. Adding Express and port mapping
 
-1.  **Install Production Dependencies**
+1.  **Install production dependencies**
     -   Run the following command
     
         ```shell
@@ -154,7 +154,7 @@ It focuses on separating the build process for a smaller final image while maint
         docker compose run --rm -v ./app:/app app npm add --save-dev @types/express
         ```
 
-2.  **Update Application Code**
+2.  **Update application code**
     Update the `./src/index.ts` to the following Express server:
 
     ```typescript
@@ -168,7 +168,7 @@ It focuses on separating the build process for a smaller final image while maint
     app.listen(port, () => console.log(`Example app listening on port ${port}`));
     ```
 
-3.  **Rebuild and Test**
+3.  **Rebuild and test**
     -   Run the following command
     
         ```shell
@@ -184,7 +184,7 @@ It focuses on separating the build process for a smaller final image while maint
     > [!IMPORTANT]
     > The container is running but the port is not exposed. **Exit your container by pressing `Ctrl+C`** on your keyboard.
 
-4.  **Publish Port**
+4.  **Publish port**
     -   Update `docker-compose.yaml` to include the port mapping:
 
         ```yaml
@@ -201,9 +201,9 @@ It focuses on separating the build process for a smaller final image while maint
 
 ---
 
-## 5. Enabling Hot Reloading for Development
+## 5. Enabling hot reloading for development
 
-1.  **Prepare for Live Development**
+1.  **Prepare for live development**
     -   Update the `./src/index.ts` from `Hello World!` to `Hello Universe!`
         > You'll notice this change is not reflected upon browser refresh, as the image still contains the old compiled code.
 
@@ -214,7 +214,7 @@ It focuses on separating the build process for a smaller final image while maint
           - ./app:/app
         ```
 
-2.  **Install Development Tools**
+2.  **Install development tools**
     -   Run the following command
     
         ```shell
@@ -222,7 +222,7 @@ It focuses on separating the build process for a smaller final image while maint
         ```
         > Note how we no longer need the `-v ./app:/app` argument because the volume mount is now defined in the `docker-compose.yaml` file.
 
-3.  **Configure Hot Reloading**
+3.  **Configure hot reloading**
     -   Add a new script in `package.json` called `dev` using the robust command:
 
         ```json
@@ -238,7 +238,7 @@ It focuses on separating the build process for a smaller final image while maint
           - dev
         ```
 
-4.  **Final Test**
+4.  **Final test**
     -   Run the following command
     
         ```shell

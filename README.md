@@ -66,7 +66,7 @@ It focuses on separating the build process for a smaller final image while maint
         > Notice this automatically creates a `package-lock.json` file.
         > Even though dependencies have been installed, if you run `docker images` again, you'll see the image size hasn't changed because the `node_modules` were written to your local volume, not the image layer.
 
-2.  **Create `tsconfig.json`**
+2.  **Create `tsconfig.json`**  
     Add the following content to configure the TypeScript compiler:
 
     ```json
@@ -99,7 +99,7 @@ It focuses on separating the build process for a smaller final image while maint
 
 ## 3. Production build and initial run
 
-1.  **Update `Dockerfile`**
+1.  **Update `Dockerfile`**  
     Update the end of your `Dockerfile` to handle dependencies, build the project, and define the runtime command:
 
     ```Dockerfile
@@ -154,7 +154,7 @@ It focuses on separating the build process for a smaller final image while maint
         docker compose run --rm -v ./app:/app app npm add --save-dev @types/express
         ```
 
-2.  **Update application code**
+2.  **Update application code**  
     Update the `./src/index.ts` to the following Express server:
 
     ```typescript

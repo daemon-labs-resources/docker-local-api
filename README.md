@@ -1,4 +1,4 @@
-# docker-local-api
+# Learn to build and develop a basic API project with Docker
 
 This guide walks you through setting up an efficient local API development environment using **Docker**, **Node.js**, **TypeScript**, and **Express**. 
 It focuses on separating the build process for a smaller final image while maintaining hot-reloading for development.

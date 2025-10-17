@@ -1,16 +1,17 @@
 # docker-local-api
 
-This guide walks you through setting up a modern local API development environment using **Docker**, **Node.js**, **TypeScript**, and **Express**, complete with hot-reloading for an efficient workflow.
+This guide walks you through setting up an efficient local API development environment using **Docker**, **Node.js**, **TypeScript**, and **Express**. 
+It focuses on separating the build process for a smaller final image while maintaining hot-reloading for development.
 
 ---
 
-## Setup and Initialization
+## 1. Project Setup and Basic Build
 
 1.  **Create Project Folder**
     > If you are able to, create a Git repo, clone, and use that folder as your project root.
 
 2.  **Create `Dockerfile`**
-    Add the following content to define your base environment:
+    Add the following content:
 
     ```Dockerfile
     FROM node:22-alpine
@@ -19,43 +20,53 @@ This guide walks you through setting up a modern local API development environme
     ```
 
 3.  **Create `docker-compose.yaml`**
-    Add the following content to define your service and local volume:
+    Add the following content to define your service:
 
     ```yaml
     ---
     services:
       app:
         build: .
-        volumes:
-          - ./app:/app
     ```
 
-4.  **Install Dependencies**
-    Execute the following commands to initialize your Node project and install core packages:
-
-    -   **(Optional)** Run the following command
-
+4.  **Initial Image Check**
+    -   Run the following command
+        
         ```shell
         docker compose build
         ```
+        > If you now run `docker images`, you'll see a newly created image which should be around 226MB in size.
+
+    -   Run the following command
+    
+        ```shell
+        docker compose run --rm app node --version
+        ```
+        > The output should start with `v22` followed by the latest minor and patch version.
+
+---
+
+## 2. Dependency Management and TypeScript Config
+
+1.  **Initialise Project and Install Dev Dependencies**
+    We use explicit volume mounts (`-v ./app:/app`) in the following commands to ensure the generated files are saved back to your local host folder.
 
     -   Run the following command
 
         ```shell
-        docker compose run --rm app npm init -y
+        docker compose run --rm -v ./app:/app app npm init -y
         ```
         > Notice how the `app` directory is automatically created on your host machine due to the volume mount.
 
     -   Run the following command
+
         ```shell
-        docker compose run --rm app npm add --save-dev @types/node@22 @tsconfig/recommended typescript
+        docker compose run --rm -v ./app:/app app npm add --save-dev @types/node@22 @tsconfig/recommended typescript
         ```
+        > Notice this automatically creates a `package-lock.json` file.
+        > Even though dependencies have been installed, if you run `docker images` again, you'll see the image size hasn't changed because the `node_modules` were written to your local volume, not the image layer.
 
----
-
-## TypeScript Configuration
-
-1.  **Create `tsconfig.json`**
+2.  **Create `tsconfig.json`**
     Add the following content to configure the TypeScript compiler:
 
     ```json
@@ -68,58 +79,83 @@ This guide walks you through setting up a modern local API development environme
     ```
 
     > [!NOTE]
-    > This configuration is manually created for brevity and clarity, utilizing a recommended preset.
+    > While you could auto-generate this file, our manual configuration using a recommended preset keeps the file minimal and clean.
 
-2.  **Create `./src/index.ts`**
-    Create the source file with a simple test:
+3.  **Create Source File and Scripts**
+    -   Create `./src/index.ts` with the following:
 
-    ```typescript
-    console.log('Hello world!');
-    ```
-
-3.  **Add Build and Start Scripts**
-    Add the following to the `scripts` section in your `package.json`:
-
-    ```json
-    "start": "node ./dist/index.js",
-    "build": "tsc",
-    ```
-
-4.  **Test the Build Process**
-    -   Run the following command
-
-        ```shell
-        docker compose run --rm app npm run build
+        ```typescript
+        console.log('Hello world!');
         ```
-        > You'll notice an `index.js` file has now appeared inside a newly created `./dist` folder.
+
+    -   Add the following to the `scripts` section in your `package.json`:
+
+        ```json
+        "start": "node ./dist/index.js",
+        "build": "tsc",
+        ```
+
+---
+
+## 3. Production Build and Initial Run
+
+1.  **Update `Dockerfile`**
+    Update the end of your `Dockerfile` to handle dependencies, build the project, and define the runtime command:
+
+    ```Dockerfile
+    COPY ./app/package*.json ./
+
+    RUN npm ci
+
+    COPY ./app .
+
+    RUN npm run build
+
+    CMD [ "npm", "start" ]
+    ```
+
+2.  **Run Final Build**
+    -   Run the following command
+
+        ```shell
+        docker compose build
+        ```
 
     -   Run the following command
 
         ```shell
-        docker compose run --rm app npm start
+        docker compose run --rm app ls -la
+        ```
+        > Notice that we haven't included `-v ./app:/app` in this command, but the output still includes a `dist` folder. This is because the build step was executed *inside* the image during the `docker compose build` process.
+
+3.  **Test the Application**
+    -   Run the following command
+
+        ```shell
+        docker compose up
         ```
         > You should see a couple of lines of Node debug followed by your `Hello world!`.
 
 ---
 
-## Adding Express and Port Mapping
+## 4. Adding Express and Port Mapping
 
-1.  **Install Express**
-    Install the core Express package and its TypeScript definitions:
+1.  **Install Production Dependencies**
     -   Run the following command
-
+    
         ```shell
-        docker compose run --rm app npm add express
+        docker compose run --rm -v ./app:/app app npm add express
         ```
-        > Notice how this one is not marked as `--save-dev`. You'll see a new `dependencies` section has been added to `package.json`.
+        > This dependency is added to the `dependencies` section in your local `package.json`.
 
     -   Run the following command
+    
         ```shell
-        docker compose run --rm app npm add --save-dev @types/express
+        docker compose run --rm -v ./app:/app app npm add --save-dev @types/express
         ```
 
-2.  **Update `./src/index.ts`**
-    Replace the contents with the Express server code:
+2.  **Update Application Code**
+    Update the `./src/index.ts` to the following Express server:
 
     ```typescript
     import express from 'express';
@@ -132,36 +168,23 @@ This guide walks you through setting up a modern local API development environme
     app.listen(port, () => console.log(`Example app listening on port ${port}`));
     ```
 
-3.  **Test the Server (Initial)**
+3.  **Rebuild and Test**
     -   Run the following command
-
-        ```shell
-        docker compose run --rm app npm run build
-        ```
-
-    -   Run the following command
-
-        ```shell
-        docker compose run --rm app npm start
-        ```
-
-    > [!IMPORTANT]
-    > The container won't exit now, as the Express server is running. Accessing `http://localhost:3000` still won't work because the port isn't published yet. **Exit the container by pressing `Ctrl+C`** on your keyboard.
-
-4.  **Set Default Command and Publish Port**
-    -   Update the end of your `Dockerfile`:
-
-        ```Dockerfile
-        CMD [ "npm", "start" ]
-        ```
-        > We have now defined the default command for our container.
-
-    -   Run the following command
-
+    
         ```shell
         docker compose build
         ```
 
+    -   Run the following command
+    
+        ```shell
+        docker compose up
+        ```
+
+    > [!IMPORTANT]
+    > The container is running but the port is not exposed. **Exit your container by pressing `Ctrl+C`** on your keyboard.
+
+4.  **Publish Port**
     -   Update `docker-compose.yaml` to include the port mapping:
 
         ```yaml
@@ -170,53 +193,58 @@ This guide walks you through setting up a modern local API development environme
         ```
 
     -   Run the following command
-
+    
         ```shell
         docker compose up
         ```
-        > This command starts the service in detached mode if you add `-d`, but by default it runs in the foreground. If you open `http://localhost:3000` in your browser now, it should work.
+        > If you open `http://localhost:3000` in your browser now, you should see `{"message":"Hello World!"}`.
 
 ---
 
-## Enabling Hot Reloading (Final Step)
+## 5. Enabling Hot Reloading for Development
 
-1.  **Install Development Tools**
-    -   Update the `./src/index.ts` file from `Hello World!` to `Hello Universe!`
-        > This change won't take effect until we implement hot-reloading.
+1.  **Prepare for Live Development**
+    -   Update the `./src/index.ts` from `Hello World!` to `Hello Universe!`
+        > You'll notice this change is not reflected upon browser refresh, as the image still contains the old compiled code.
+
+    -   Update `docker-compose.yaml` to include the local volume mount for live syncing:
+
+        ```yaml
+        volumes:
+          - ./app:/app
+        ```
+
+2.  **Install Development Tools**
     -   Run the following command
-
+    
         ```shell
         docker compose run --rm app npm add --save-dev nodemon ts-node
         ```
+        > Note how we no longer need the `-v ./app:/app` argument because the volume mount is now defined in the `docker-compose.yaml` file.
 
-2.  **Add Robust `dev` Script**
-    Add a new script in `package.json` to start `nodemon` using the most reliable configuration:
+3.  **Configure Hot Reloading**
+    -   Add a new script in `package.json` called `dev` using the robust command:
 
-    ```json
-    "start": "node ./dist/index.js",
-    "build": "tsc",
-    "dev": "nodemon ./src/index.ts --legacy-watch",
-    ```
-    > [!TIP]
-    > The flags `--legacy-watch` (to reliably detect file changes over Docker volumes, especially on Windows) are used to ensure the hot-reloading works for all users.
+        ```json
+        "dev": "nodemon --exec ts-node ./src/index.ts --legacy-watch"
+        ```
 
-3.  **Switch to Development Command**
-    Update `docker-compose.yaml` to override the default `CMD`:
+    -   Update `docker-compose.yaml` to override the default `CMD` with the new development command:
 
-    ```yaml
-    command:
-      - npm
-      - run
-      - dev
-    ```
+        ```yaml
+        command:
+          - npm
+          - run
+          - dev
+        ```
 
 4.  **Final Test**
     -   Run the following command
-
+    
         ```shell
         docker compose up
         ```
-        > You should now see the `Hello Universe!` message in your browser.
+        > Your browser should now return the `Hello Universe!` message.
 
     -   Update the `./src/index.ts` back to `Hello World!`
-        > You'll immediately notice in your container logs that **`nodemon` has restarted** due to changes, and a refresh of your browser shows the updated content without having to manually stop and restart the container.
+        > You'll notice in your container logs that `nodemon` has restarted due to changes, and your browser updates without requiring a manual stop/build/start cycle.

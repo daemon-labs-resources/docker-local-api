@@ -265,100 +265,106 @@ It focuses on separating the build process for a smaller final image while maint
 ## 6. Improving image size with multi-stage builds
 
 1. **Run a baseline build**
-    -   Run the following command:
+   - Run the following command:
 
-        ```shell
-        docker compose build
-        ```
-        > If you run `docker images` now, your image contains all dev dependencies and is about **334MB** in size. 
-        > We want to reduce this to only include what is needed for production.
+     ```shell
+     docker compose build
+     ```
+
+     > If you run `docker images` now, your image contains all dev dependencies and is about **334MB** in size.
+     > We want to reduce this to only include what is needed for production.
 
 2. **Create `.dockerignore`**  
-    This prevents unnecessary files from being copied into the build context.
+   This prevents unnecessary files from being copied into the build context.
 
-    ```dockerignore
-    app/dist
-    app/node_modules
-    ```
-    > We exclude auto-generated and local environment files to ensure clean, repeatable builds.
+   ```dockerignore
+   app/dist
+   app/node_modules
+   ```
+
+   > We exclude auto-generated and local environment files to ensure clean, repeatable builds.
 
 3. **Update the `Dockerfile` for multi-stage build**
-    Replace the entire content of your `Dockerfile` with the following:
+   Replace the entire content of your `Dockerfile` with the following:
 
-      ```Dockerfile
-      FROM node:22-alpine AS base
+   ```Dockerfile
+   FROM node:22-alpine AS base
 
-      WORKDIR /app
+   WORKDIR /app
 
-      FROM base AS build
+   FROM base AS build
 
-      COPY ./app/package*.json ./
+   COPY ./app/package*.json ./
 
-      RUN npm ci
+   RUN npm ci
 
-      COPY ./app .
+   COPY ./app .
 
-      RUN npm run build
+   RUN npm run build
 
-      FROM base
+   FROM base
 
-      COPY --from=build /app/package*.json ./
-      COPY --from=build /app/dist ./dist
+   COPY --from=build /app/package*.json ./
+   COPY --from=build /app/dist ./dist
 
-      RUN npm ci --only=production
+   RUN npm ci --only=production
 
-      CMD [ "npm", "start" ]
-      ```
+   CMD [ "npm", "start" ]
+   ```
 
-4.  **Create `docker-compose.base.yaml`**  
-    This file defines the production-ready service configuration.
+4. **Create `docker-compose.base.yaml`**  
+   This file defines the production-ready service configuration.
 
-    ```yaml
-    ---
-    services:
-      app:
-        build: .
-        ports:
-          - 3000:3000
-    ```
-    > This gives us a base production setup.
+   ```yaml
+   ---
+   services:
+     app:
+       build: .
+       ports:
+         - 3000:3000
+   ```
+
+   > This gives us a base production setup.
 
 5. **Update `docker-compose.yaml`**  
-    This file now **extends** the base and adds the development-specific overrides (volumes and the `dev` command).
+   This file now **extends** the base and adds the development-specific overrides (volumes and the `dev` command).
 
-    ```yaml
-    ---
-    services:
-      app:
-        extends:
-          file: docker-compose.base.yaml
-          service: app
-        command:
-          - npm
-          - run
-          - dev
-        volumes:
-          - .:/app
-    ```
+   ```yaml
+   ---
+   services:
+     app:
+       extends:
+         file: docker-compose.base.yaml
+         service: app
+       command:
+         - npm
+         - run
+         - dev
+       volumes:
+         - .:/app
+   ```
 
 6. **Run final build and check size**
-    - Run the command:
+   - Run the command:
 
-        ```shell
-        docker compose build
-        ```
-        > If you run `docker images` now, your final image should be significantly smaller (closer to **230MB**), as it only contains the production dependencies and the compiled code.
+     ```shell
+     docker compose build
+     ```
 
-    - Test the production build:
+     > If you run `docker images` now, your final image should be significantly smaller (closer to **230MB**), as it only contains the production dependencies and the compiled code.
 
-        ```shell
-        docker compose -f ./docker-compose.base.yaml up
-        ```
-        > This runs the application in production mode, using the `CMD [ "npm", "start" ]` from the new `Dockerfile`.
+   - Test the production build:
 
-    - Test the development setup:
+     ```shell
+     docker compose -f ./docker-compose.base.yaml up
+     ```
 
-        ```shell
-        docker compose  up
-        ```
-        > This should still work exactly the same as it did before we made these changes.
+     > This runs the application in production mode, using the `CMD [ "npm", "start" ]` from the new `Dockerfile`.
+
+   - Test the development setup:
+
+     ```shell
+     docker compose up
+     ```
+
+     > This should still work exactly the same as it did before we made these changes.

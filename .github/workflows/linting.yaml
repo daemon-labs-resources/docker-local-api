@@ -1,0 +1,16 @@
+---
+name: Linting
+on:
+  push:
+    branches-ignore:
+      - main
+permissions:
+  contents: read
+jobs:
+  linting:
+    uses: daemon-labs-resources/.github/.github/workflows/linting.yaml@main
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+      checks: write

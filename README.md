@@ -13,10 +13,12 @@ It focuses on separating the build process for a smaller final image while maint
    ```shell
    mkdir -p ~/Documents/daemon-labs/docker-api
    ```
-   > You can either create this via a terminal window or your file explorer
+
+   > You can either create this via a terminal window or your file explorer.
 
 2. **Open the new folder in your code editor**
-   > If you are using VSCode, we can now do everything from within the code editor
+
+   > If you are using VSCode, we can now do everything from within the code editor.
 
 3. **Create `Dockerfile`**  
    Add the following content:

@@ -8,10 +8,19 @@ It focuses on separating the build process for a smaller final image while maint
 ## 1. Project setup and basic build
 
 1. **Create project folder**
+   Create a new folder for your project in a sensible location, for example:
 
-   > If you are able to, create a Git repo, clone, and use that folder as your project root.
+   ```shell
+   mkdir -p ~/Documents/daemon-labs/docker-api
+   ```
 
-2. **Create `Dockerfile`**  
+   > You can either create this via a terminal window or your file explorer.
+
+2. **Open the new folder in your code editor**
+
+   > If you are using VSCode, we can now do everything from within the code editor.
+
+3. **Create `Dockerfile`**  
    Add the following content:
 
    ```Dockerfile
@@ -20,7 +29,7 @@ It focuses on separating the build process for a smaller final image while maint
    WORKDIR /app
    ```
 
-3. **Create `docker-compose.yaml`**  
+4. **Create `docker-compose.yaml`**  
    Add the following content to define your service:
 
    ```yaml
@@ -30,7 +39,7 @@ It focuses on separating the build process for a smaller final image while maint
        build: .
    ```
 
-4. **Initial image check**
+5. **Initial image check**
    - Run the following command
 
      ```shell
@@ -82,8 +91,7 @@ It focuses on separating the build process for a smaller final image while maint
    }
    ```
 
-   > [!NOTE]
-   > While you could auto-generate this file, our manual configuration using a recommended preset keeps the file minimal and clean.
+   > ℹ️ While you could auto-generate this file, our manual configuration using a recommended preset keeps the file minimal and clean.
 
 3. **Create source file and scripts**
    - Create `./src/index.ts` with the following:
@@ -188,8 +196,8 @@ It focuses on separating the build process for a smaller final image while maint
      docker compose up
      ```
 
-   > [!IMPORTANT]
-   > The container is running but the port is not exposed. **Exit your container by pressing `Ctrl+C`** on your keyboard.
+   > ⚠️ The container is running but the port is not exposed.  
+   > **Exit your container by pressing `Ctrl+C`** on your keyboard.
 
 4. **Publish port**
    - Update `docker-compose.yaml` to include the port mapping:

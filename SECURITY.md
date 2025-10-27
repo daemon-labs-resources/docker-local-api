@@ -2,13 +2,12 @@
 
 ## Reporting a Vulnerability
 
-We take the security of this project seriously. While this repository is primarily an educational resource and not intended for production deployment, we encourage users to report any security vulnerabilities they discover.
+We take the security of this project seriously. While this repository is primarily an educational resource and is **not intended for production deployment**, we still encourage users to report any security vulnerabilities they discover.
 
-Please **DO NOT** report security vulnerabilities via public GitHub issues.
+**Please DO NOT report security issues via public GitHub Issues or Pull Requests.**
 
-Instead, please report it privately by sending an email to:
-
-**security@daemon-labs.com** (or your designated security contact email)
+Instead, please report it privately by using GitHub's **"Report a vulnerability"** feature.
+You can find this option under the **Security** tab of this repository.
 
 ### Preferred Information
 

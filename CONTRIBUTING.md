@@ -21,16 +21,16 @@ We are looking for PRs that:
 
 ## Pull Request Guidelines
 
-1.  **Fork** the repository to your own GitHub account.
-2.  **Clone** your fork locally and navigate into the directory:
-    ```bash
-    git clone [https://github.com/YOUR_USERNAME/docker-local-api.git](https://github.com/YOUR_USERNAME/docker-local-api.git)
-    cd docker-local-api
-    ```
-3.  **Create a new, descriptive branch** for your changes (e.g., `fix/typo-in-readme`).
-4.  **Make your changes**, ensuring you run `docker compose up` to verify that the project still works after your changes.
-5.  **Write clear and concise commit messages.** Each commit should address a single logical change.
-6.  **Push your branch** and open a **Pull Request** against the `main` branch of this repository.
+1. **Fork** the repository to your own GitHub account.
+2. **Clone** your fork locally and navigate into the directory:
+   ```bash
+   git clone [https://github.com/YOUR_USERNAME/docker-local-api.git](https://github.com/YOUR_USERNAME/docker-local-api.git)
+   cd docker-local-api
+   ```
+3. **Create a new, descriptive branch** for your changes (e.g., `fix/typo-in-readme`).
+4. **Make your changes**, ensuring you run `docker compose up` to verify that the project still works after your changes.
+5. **Write clear and concise commit messages.** Each commit should address a single logical change.
+6. **Push your branch** and open a **Pull Request** against the `main` branch of this repository.
 
 Please clearly describe what you changed and why in the PR description.
 

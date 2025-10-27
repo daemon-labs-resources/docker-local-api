@@ -4,7 +4,7 @@ repository:
   homepage: https://github.com/daemon-labs-resources/docker-local-api
   topics: daemon-labs, daemon-labs-resources, docker-local-api
   private: false
-  has_issues: false
+  has_issues: true
   has_projects: false
   has_wiki: false
   has_downloads: false
@@ -46,7 +46,7 @@ rulesets:
       - type: pull_request
         parameters:
           allowed_merge_methods:
-            - merge
+            - squash
           dismiss_stale_reviews_on_push: true
           require_code_owner_review: true
           require_last_push_approval: true

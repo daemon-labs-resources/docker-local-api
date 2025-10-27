@@ -2,19 +2,22 @@
 
 We welcome contributions to this project! This repository is primarily a **tutorial and educational resource**, so we are focused on changes that enhance clarity, correctness, and pedagogical value. By participating, you agree to abide by our [Code of Conduct](./CODE_OF_CONDUCT.md).
 
-***
+---
 
 ## Ways to Contribute
 
 ### 1. Reporting Issues
-* **Found a bug?** If the instructions or code examples don't work, please open a new **Issue**. Be sure to include your operating system, Docker version, and the exact steps to reproduce the error.
-* **Suggesting Enhancements?** If you have an idea to make the tutorial clearer or suggest a common, robust alternative approach (e.g., a different base image), feel free to open an Issue to discuss it first.
+
+- **Found a bug?** If the instructions or code examples don't work, please open a new **Issue**. Be sure to include your operating system, Docker version, and the exact steps to reproduce the error.
+- **Suggesting Enhancements?** If you have an idea to make the tutorial clearer or suggest a common, robust alternative approach (e.g., a different base image), feel free to open an Issue to discuss it first.
 
 ### 2. Submitting Pull Requests (PRs)
+
 We are looking for PRs that:
-* **Fix typos or incorrect commands** in the `README.md` or configuration files.
-* **Improve the explanation or clarity** of the steps.
-* **Correct any non-functional code** in `src/index.ts` or configuration files.
+
+- **Fix typos or incorrect commands** in the `README.md` or configuration files.
+- **Improve the explanation or clarity** of the steps.
+- **Correct any non-functional code** in `src/index.ts` or configuration files.
 
 ## Pull Request Guidelines
 
@@ -31,7 +34,7 @@ We are looking for PRs that:
 
 Please clearly describe what you changed and why in the PR description.
 
-***
+---
 
 ## Code of Conduct
 

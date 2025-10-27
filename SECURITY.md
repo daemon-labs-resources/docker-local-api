@@ -14,10 +14,10 @@ Instead, please report it privately by sending an email to:
 
 To help us address the issue quickly, please include the following in your report:
 
-* A brief description of the vulnerability.
-* The steps required to reproduce the issue.
-* Your environment details (e.g., Docker version, operating system).
-* Any suggested mitigations or fixes (if known).
+- A brief description of the vulnerability.
+- The steps required to reproduce the issue.
+- Your environment details (e.g., Docker version, operating system).
+- Any suggested mitigations or fixes (if known).
 
 We will acknowledge your report within 48 hours and provide a detailed response to the reported vulnerability within 7 days.
 

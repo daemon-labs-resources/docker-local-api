@@ -10,7 +10,7 @@ assignees: ""
 
 ### The Improvement
 
-Describe the enhancement or change you would like to see. This could be a new feature, a better explanation in the README, or an alternative Docker setup.
+Describe the enhancement or change you would like to see. This could be a new feature, a better explanation in the readme, or an alternative Docker setup.
 
 ### Rationale
 
@@ -22,4 +22,4 @@ If you have a proposed solution, briefly describe how it could be implemented (e
 
 ### Related Files/Sections
 
-Which files or sections of the README are affected by this suggestion?
+Which files or sections of the readme are affected by this suggestion?

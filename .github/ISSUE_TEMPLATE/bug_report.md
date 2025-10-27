@@ -16,8 +16,8 @@ A clear and concise description of what the bug is.
 
 Steps to reproduce the behavior:
 
-1.  Run '...'
-2.  See error '...'
+1. Run '...' 
+2. See error '...'
 
 ### Expected behavior
 

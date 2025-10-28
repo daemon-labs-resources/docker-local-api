@@ -1,27 +1,40 @@
-# Pull Request
+# 📝 Pull Request
 
-## Summary
+## Is this PR related to an open issue?
 
-### Description
+- [ ] Yes, it resolves: [Link Issue Number(s) Here]
+- [ ] No, this is a new change/addition.
 
-Please summarize your changes and the issue they address. Link the relevant issue number if one exists (e.g., `Fixes #123`).
+## Description of changes
 
-### Motivation and Context
+- **What was changed?** (e.g., Added a new section, corrected a command, rephrased a paragraph)
+- **Where was the change made?** (e.g., `WORKSHOP.md`, line 45; `README.md` section Prerequisites)
 
-Why is this change necessary? How does it improve the tutorial or fix a problem?
+## Why is this change necessary?
+
+- [ ] Correction: Fixing a typo, broken link, or inaccurate information.
+- [ ] Clarification: Making a confusing section easier to understand.
+- [ ] Addition: Adding entirely new content/steps to the workshop.
+- [ ] Refactoring: Reorganising content without changing the meaning.
+- [ ] Other: [Please describe]
 
 ---
 
-## Checklist
+## Cross-platform (Mac, Windows, Chromebook, Linux) checklist
 
-Please check all that apply:
+**Contributor must confirm the following to maintain compatibility across all target systems:**
 
-- [ ] I have read the [CONTRIBUTING.md] and followed the guidelines.
-- [ ] My change addresses an existing bug or improves the clarity of the tutorial.
-- [ ] The code/instructions still function correctly (I have run `docker compose up`).
-- [ ] My changes do not introduce new, complex dependencies.
-- [ ] The `README.md` has been updated if my changes affect the setup process.
+- [ ] **Path separation:** Directory paths use **forward slashes (`/`)** only (avoiding Windows-style backslashes `\`).
+- [ ] **Shell commands:** Commands use only **universal syntax** (e.g., `docker compose up`, avoiding complex OS-specific utilities).
+- [ ] **Terminal check:** The instructions are clear and functional when run from common terminals across Mac, Windows, Chromebook (Crosh/Terminal), and Linux.
+- [ ] **Case sensitivity:** Filenames are referenced correctly using **case-sensitive** best practices to prevent errors when pulled down on different operating systems.
+- [ ] **Prerequisites slignment:** The changes do not introduce any new local tools that are not explicitly documented in the **Prerequisites Guide**.
 
-## Screenshots (if applicable)
+---
 
-If your changes involve visual output (like an API response), please include a screenshot or code snippet of the result.
+## Reviewer checklist
+
+- [ ] The content follows the style and tone of existing documentation.
+- [ ] The changes are grammatically correct and free of typos.
+- [ ] The file structure is maintained (e.g., no unnecessary files added).
+- [ ] (If applicable) All internal and external links are working.

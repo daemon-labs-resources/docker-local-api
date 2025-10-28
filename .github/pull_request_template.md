@@ -4,7 +4,7 @@
 
 ### Description
 
-Please summarize your changes and the issue they address. Link the relevant issue number if one exists (e.g., `Fixes #123`).
+Please summarise your changes and the issue they address. Link the relevant issue number if one exists (e.g., `Fixes #123`).
 
 ### Motivation and Context
 

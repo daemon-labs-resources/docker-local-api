@@ -1,4 +1,4 @@
-# 🐳 Dockerised local API development environment
+# 📚 Daemon Labs workshop documentation hub
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 

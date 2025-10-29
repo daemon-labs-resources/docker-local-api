@@ -7,7 +7,7 @@ It focuses on separating the build process for a smaller final image while maint
 
 ## 1. Project setup and basic build
 
-1. **Create project folder**
+1. **Create project folder**  
    Create a new folder for your project in a sensible location, for example:
 
    ```shell

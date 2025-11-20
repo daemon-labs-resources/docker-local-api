@@ -7,372 +7,420 @@ It focuses on separating the build process for a smaller final image while maint
 
 ## 1. Project setup and basic build
 
-1. **Create project folder**  
-   Create a new folder for your project in a sensible location, for example:
+### Create project folder
 
-   ```shell
-   mkdir -p ~/Documents/daemon-labs/docker-api
-   ```
+Create a new folder for your project in a sensible location, for example:
 
-   > You can either create this via a terminal window or your file explorer.
+```shell
+mkdir -p ~/Documents/daemon-labs/docker-api
+```
 
-2. **Open the new folder in your code editor**
+> [!NOTE]
+> You can either create this via a terminal window or your file explorer.
 
-   > If you are using VSCode, we can now do everything from within the code editor.
+### Open the new folder in your code editor
 
-3. **Create `Dockerfile`**  
-   Add the following content:
+> [!TIP]
+> If you are using VSCode, we can now do everything from within the code editor.
 
-   ```Dockerfile
-   FROM node:22-alpine
+### Create `Dockerfile`
 
-   WORKDIR /app
-   ```
+Add the following content:
 
-4. **Create `docker-compose.yaml`**  
-   Add the following content to define your service:
+```Dockerfile
+FROM node:22-alpine
 
-   ```yaml
-   ---
-   services:
-     app:
-       build: .
-   ```
+WORKDIR /app
+```
 
-5. **Initial image check**
-   - Run the following command
+### Create `docker-compose.yaml`
 
-     ```shell
-     docker compose build
-     ```
+Add the following content to define your service:
 
-     > If you now run `docker images`, you'll see a newly created image which should be around 226MB in size.
+```yaml
+---
+services:
+  app:
+    build: .
+```
 
-   - Run the following command
+### Initial image check
 
-     ```shell
-     docker compose run --rm app node --version
-     ```
+Run the following command:
 
-     > The output should start with `v22` followed by the latest minor and patch version.
+```shell
+docker compose build
+```
+
+> [!NOTE]
+> If you now run `docker images`, you'll see a newly created image which should be around 226MB in size.
+
+Run the following command:
+
+```shell
+docker compose run --rm app node --version
+```
+
+> [!NOTE]
+> The output should start with `v22` followed by the latest minor and patch version.
 
 ---
 
 ## 2. Dependency management and TypeScript config
 
-1. **Initialise project and install dev dependencies**  
-   We use explicit volume mounts (`-v ./app:/app`) in the following commands to ensure the generated files are saved back to your local host folder.
-   - Run the following command
+### Initialise project and install dev dependencies
 
-     ```shell
-     docker compose run --rm -v ./app:/app app npm init -y
-     ```
+We use explicit volume mounts (`-v ./app:/app`) in the following commands to ensure the generated files are saved back to your local host folder.
 
-     > Notice how the `app` directory is automatically created on your host machine due to the volume mount.
+Run the following command:
 
-   - Run the following command
+```shell
+docker compose run --rm -v ./app:/app app npm init -y
+```
 
-     ```shell
-     docker compose run --rm -v ./app:/app app npm add --save-dev @types/node@22 @tsconfig/recommended typescript
-     ```
+> [!NOTE]
+> Notice how the `app` directory is automatically created on your host machine due to the volume mount.
 
-     > Notice this automatically creates a `package-lock.json` file.
-     > Even though dependencies have been installed, if you run `docker images` again, you'll see the image size hasn't changed because the `node_modules` were written to your local volume, not the image layer.
+Run the following command:
 
-2. **Create `tsconfig.json`**  
-   Add the following content to configure the TypeScript compiler:
+```shell
+docker compose run --rm -v ./app:/app app npm add --save-dev @types/node@22 @tsconfig/recommended typescript
+```
 
-   ```json
-   {
-     "extends": "@tsconfig/recommended/tsconfig.json",
-     "compilerOptions": {
-       "outDir": "./dist"
-     }
-   }
-   ```
+> [!NOTE]
+> Notice this automatically creates a `package-lock.json` file.
+> Even though dependencies have been installed, if you run `docker images` again, you'll see the image size hasn't changed because the `node_modules` were written to your local volume, not the image layer.
 
-   > ℹ️ While you could auto-generate this file, our manual configuration using a recommended preset keeps the file minimal and clean.
+### Create `tsconfig.json`
 
-3. **Create source file and scripts**
-   - Create `./src/index.ts` with the following:
+Add the following content to configure the TypeScript compiler:
 
-     ```typescript
-     console.log("Hello world!");
-     ```
+```json
+{
+  "extends": "@tsconfig/recommended/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist"
+  }
+}
+```
 
-   - Add the following to the `scripts` section in your `package.json`:
+> [!NOTE]
+> While you could auto-generate this file, our manual configuration using a recommended preset keeps the file minimal and clean.
 
-     ```json
-     "start": "node ./dist/index.js",
-     "build": "tsc",
-     ```
+### Create source file and scripts
+
+Create `./src/index.ts` with the following:
+
+```typescript
+console.log("Hello world!");
+```
+
+Add the following to the `scripts` section in your `package.json`:
+
+```json
+"start": "node ./dist/index.js",
+"build": "tsc",
+```
 
 ---
 
 ## 3. Production build and initial run
 
-1. **Update `Dockerfile`**  
-   Update the end of your `Dockerfile` to handle dependencies, build the project, and define the runtime command:
+### Update `Dockerfile`
 
-   ```Dockerfile
-   COPY ./app/package*.json ./
+Update the end of your `Dockerfile` to handle dependencies, build the project, and define the runtime command:
 
-   RUN npm ci
+```Dockerfile
+COPY ./app/package*.json ./
 
-   COPY ./app .
+RUN npm ci
 
-   RUN npm run build
+COPY ./app .
 
-   CMD [ "npm", "start" ]
-   ```
+RUN npm run build
 
-2. **Run final build**
-   - Run the following command
+CMD [ "npm", "start" ]
+```
 
-     ```shell
-     docker compose build
-     ```
+### Run final build
 
-   - Run the following command
+Run the following command:
 
-     ```shell
-     docker compose run --rm app ls -la
-     ```
+```shell
+docker compose build
+```
 
-     > Notice that we haven't included `-v ./app:/app` in this command, but the output still includes a `dist` folder. This is because the build step was executed _inside_ the image during the `docker compose build` process.
+Run the following command:
 
-3. **Test the application**
-   - Run the following command
+```shell
+docker compose run --rm app ls -la
+```
 
-     ```shell
-     docker compose up
-     ```
+> [!NOTE]
+> Notice that we haven't included `-v ./app:/app` in this command, but the output still includes a `dist` folder. This is because the build step was executed _inside_ the image during the `docker compose build` process.
 
-     > You should see a couple of lines of Node debug followed by your `Hello world!`.
+### Test the application
+
+Run the following command:
+
+```shell
+docker compose up
+```
+
+> [!NOTE]
+> You should see a couple of lines of Node debug followed by your `Hello world!`.
 
 ---
 
 ## 4. Adding Express and port mapping
 
-1. **Install production dependencies**
-   - Run the following command
+### Install production dependencies
 
-     ```shell
-     docker compose run --rm -v ./app:/app app npm add express
-     ```
+Run the following command:
 
-     > This dependency is added to the `dependencies` section in your local `package.json`.
+```shell
+docker compose run --rm -v ./app:/app app npm add express
+```
 
-   - Run the following command
+> [!NOTE]
+> This dependency is added to the `dependencies` section in your local `package.json`.
 
-     ```shell
-     docker compose run --rm -v ./app:/app app npm add --save-dev @types/express
-     ```
+Run the following command:
 
-2. **Update application code**  
-   Update the `./src/index.ts` to the following Express server:
+```shell
+docker compose run --rm -v ./app:/app app npm add --save-dev @types/express
+```
 
-   ```typescript
-   import express from "express";
+### Update application code
 
-   const app = express();
-   const port = 3000;
+Update the `./src/index.ts` to the following Express server:
 
-   app.get("/", (_req, res) => res.json({ message: "Hello World!" }));
+```typescript
+import express from "express";
 
-   app.listen(port, () => console.log(`Example app listening on port ${port}`));
-   ```
+const app = express();
+const port = 3000;
 
-3. **Rebuild and test**
-   - Run the following command
+app.get("/", (_req, res) => res.json({ message: "Hello World!" }));
 
-     ```shell
-     docker compose build
-     ```
+app.listen(port, () => console.log(`Example app listening on port ${port}`));
+```
 
-   - Run the following command
+### Rebuild and test
 
-     ```shell
-     docker compose up
-     ```
+Run the following command:
 
-   > ⚠️ The container is running but the port is not exposed.  
-   > **Exit your container by pressing `Ctrl+C`** on your keyboard.
+```shell
+docker compose build
+```
 
-4. **Publish port**
-   - Update `docker-compose.yaml` to include the port mapping:
+Run the following command:
 
-     ```yaml
-     ports:
-       - 3000:3000
-     ```
+```shell
+docker compose up
+```
 
-   - Run the following command
+> [!WARNING]
+> The container is running but the port is not exposed.  
+> **Exit your container by pressing `Ctrl+C`** on your keyboard.
 
-     ```shell
-     docker compose up
-     ```
+### Publish port
 
-     > If you open `http://localhost:3000` in your browser now, you should see `{"message":"Hello World!"}`.
+Update `docker-compose.yaml` to include the port mapping:
+
+```yaml
+ports:
+  - 3000:3000
+```
+
+Run the following command:
+
+```shell
+docker compose up
+```
+
+> [!NOTE]
+> If you open `http://localhost:3000` in your browser now, you should see `{"message":"Hello World!"}`.
 
 ---
 
 ## 5. Enabling hot reloading for development
 
-1. **Prepare for live development**
-   - Update the `./src/index.ts` from `Hello World!` to `Hello Universe!`
+### Prepare for live development
 
-     > You'll notice this change is not reflected upon browser refresh, as the image still contains the old compiled code.
+Update the `./src/index.ts` from `Hello World!` to `Hello Universe!`
 
-   - Update `docker-compose.yaml` to include the local volume mount for live syncing:
+> [!NOTE]
+> You'll notice this change is not reflected upon browser refresh, as the image still contains the old compiled code.
 
-     ```yaml
-     volumes:
-       - ./app:/app
-     ```
+Update `docker-compose.yaml` to include the local volume mount for live syncing:
 
-2. **Install development tools**
-   - Run the following command
+```yaml
+volumes:
+  - ./app:/app
+```
 
-     ```shell
-     docker compose run --rm app npm add --save-dev nodemon ts-node
-     ```
+### Install development tools
 
-     > Note how we no longer need the `-v ./app:/app` argument because the volume mount is now defined in the `docker-compose.yaml` file.
+Run the following command:
 
-3. **Configure hot reloading**
-   - Add a new script in `package.json` called `dev` using the robust command:
+```shell
+docker compose run --rm app npm add --save-dev nodemon ts-node
+```
 
-     ```json
-     "dev": "nodemon --exec ts-node ./src/index.ts --legacy-watch",
-     ```
+> [!NOTE]
+> Note how we no longer need the `-v ./app:/app` argument because the volume mount is now defined in the `docker-compose.yaml` file.
 
-   - Update `docker-compose.yaml` to override the default `CMD` with the new development command:
+### Configure hot reloading
 
-     ```yaml
-     command:
-       - npm
-       - run
-       - dev
-     ```
+Add a new script in `package.json` called `dev` using the robust command:
 
-4. **Final test**
-   - Run the following command
+```json
+"dev": "nodemon --exec ts-node ./src/index.ts --legacy-watch",
+```
 
-     ```shell
-     docker compose up
-     ```
+Update `docker-compose.yaml` to override the default `CMD` with the new development command:
 
-     > Your browser should now return the `Hello Universe!` message.
+```yaml
+command:
+  - npm
+  - run
+  - dev
+```
 
-   - Update the `./src/index.ts` back to `Hello World!`
-     > You'll notice in your container logs that `nodemon` has restarted due to changes, and your browser updates without requiring a manual stop/build/start cycle.
+### Final test
+
+Run the following command:
+
+```shell
+docker compose up
+```
+
+> [!NOTE]
+> Your browser should now return the `Hello Universe!` message.
+
+Update the `./src/index.ts` back to `Hello World!`
+
+> [!NOTE]
+> You'll notice in your container logs that `nodemon` has restarted due to changes, and your browser updates without requiring a manual stop/build/start cycle.
 
 ---
 
 ## 6. Improving image size with multi-stage builds
 
-1. **Run a baseline build**
-   - Run the following command:
+### Run a baseline build
 
-     ```shell
-     docker compose build
-     ```
+Run the following command:
 
-     > If you run `docker images` now, your image contains all dev dependencies and is about **334MB** in size.
-     > We want to reduce this to only include what is needed for production.
+```shell
+docker compose build
+```
 
-2. **Create `.dockerignore`**  
-   This prevents unnecessary files from being copied into the build context.
+> [!NOTE]
+> If you run `docker images` now, your image contains all dev dependencies and is about **334MB** in size.
+> We want to reduce this to only include what is needed for production.
 
-   ```dockerignore
-   app/dist
-   app/node_modules
-   ```
+### Create `.dockerignore`
 
-   > We exclude auto-generated and local environment files to ensure clean, repeatable builds.
+This prevents unnecessary files from being copied into the build context.
 
-3. **Update the `Dockerfile` for multi-stage build**
-   Replace the entire content of your `Dockerfile` with the following:
+```dockerignore
+app/dist
+app/node_modules
+```
 
-   ```Dockerfile
-   FROM node:22-alpine AS base
+> [!NOTE]
+> We exclude auto-generated and local environment files to ensure clean, repeatable builds.
 
-   WORKDIR /app
+### Update the `Dockerfile` for multi-stage build
 
-   FROM base AS build
+Replace the entire content of your `Dockerfile` with the following:
 
-   COPY ./app/package*.json ./
+```Dockerfile
+FROM node:22-alpine AS base
 
-   RUN npm ci
+WORKDIR /app
 
-   COPY ./app .
+FROM base AS build
 
-   RUN npm run build
+COPY ./app/package*.json ./
 
-   FROM base
+RUN npm ci
 
-   COPY --from=build /app/package*.json ./
-   COPY --from=build /app/dist ./dist
+COPY ./app .
 
-   RUN npm ci --only=production
+RUN npm run build
 
-   CMD [ "npm", "start" ]
-   ```
+FROM base
 
-4. **Create `docker-compose.base.yaml`**  
-   This file defines the production-ready service configuration.
+COPY --from=build /app/package*.json ./
+COPY --from=build /app/dist ./dist
 
-   ```yaml
-   ---
-   services:
-     app:
-       build: .
-       ports:
-         - 3000:3000
-   ```
+RUN npm ci --only=production
 
-   > This gives us a base production setup.
+CMD [ "npm", "start" ]
+```
 
-5. **Update `docker-compose.yaml`**  
-   This file now **extends** the base and adds the development-specific overrides (volumes and the `dev` command).
+### Create `docker-compose.base.yaml`
 
-   ```yaml
-   ---
-   services:
-     app:
-       extends:
-         file: docker-compose.base.yaml
-         service: app
-       command:
-         - npm
-         - run
-         - dev
-       volumes:
-         - ./app:/app
-   ```
+This file defines the production-ready service configuration.
 
-6. **Run final build and check size**
-   - Run the command:
+```yaml
+---
+services:
+  app:
+    build: .
+    ports:
+      - 3000:3000
+```
 
-     ```shell
-     docker compose build
-     ```
+> [!NOTE]
+> This gives us a base production setup.
 
-     > If you run `docker images` now, your final image should be significantly smaller (closer to **230MB**), as it only contains the production dependencies and the compiled code.
+### Update `docker-compose.yaml`
 
-   - Test the production build:
+This file now **extends** the base and adds the development-specific overrides (volumes and the `dev` command).
 
-     ```shell
-     docker compose -f ./docker-compose.base.yaml up
-     ```
+```yaml
+---
+services:
+  app:
+    extends:
+      file: docker-compose.base.yaml
+      service: app
+    command:
+      - npm
+      - run
+      - dev
+    volumes:
+      - ./app:/app
+```
 
-     > This runs the application in production mode, using the `CMD [ "npm", "start" ]` from the new `Dockerfile`.
+### Run final build and check size
 
-   - Test the development setup:
+Run the command:
 
-     ```shell
-     docker compose up
-     ```
+```shell
+docker compose build
+```
 
-     > This should still work exactly the same as it did before we made these changes.
+> [!NOTE]
+> If you run `docker images` now, your final image should be significantly smaller (closer to **230MB**), as it only contains the production dependencies and the compiled code.
+
+Test the production build:
+
+```shell
+docker compose -f ./docker-compose.base.yaml up
+```
+
+> [!NOTE]
+> This runs the application in production mode, using the `CMD [ "npm", "start" ]` from the new `Dockerfile`.
+
+Test the development setup:
+
+```shell
+docker compose up
+```
+
+> [!NOTE]
+> This should still work exactly the same as it did before we made these changes.

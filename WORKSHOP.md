@@ -424,3 +424,9 @@ docker compose up
 
 > [!NOTE]
 > This should still work exactly the same as it did before we made these changes.
+
+---
+
+### 🎉 Congratulations
+
+You've just learnt to build and develop a basic API project with Docker.

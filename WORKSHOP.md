@@ -427,6 +427,6 @@ docker compose up
 
 ---
 
-### 🎉 Congratulations
+## 🎉 Congratulations
 
 You've just learnt to build and develop a basic API project with Docker.

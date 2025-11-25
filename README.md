@@ -11,6 +11,15 @@ Before beginning this workshop, please ensure your environment is correctly set 
 
 ➡️ **[Prerequisites guide](https://github.com/daemon-labs-resources/prerequisites)**
 
+Run the following command:
+
+```shell
+docker pull node:22-alpine
+```
+
+> [!TIP]
+> Pulling the Docker image isn't a requirement, but it helps to have it pre-downloaded so we don't wait for everyone to do it at the same time.
+
 ---
 
 ## 1. Project setup and basic build
